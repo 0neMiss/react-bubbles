@@ -27,8 +27,12 @@ const ColorList = ({ colors, updateColors }) => {
     axiosWithAuth()
       .put(`colors/${colorToEdit.id}`, colorToEdit)
       .then(res =>{
-        console.log(res.data)
-        
+        console.log(colorToEdit.id-1);
+        updateColors(colors.splice(colorToEdit.id-1,1, ...colors, colorToEdit));
+
+
+
+
       })
   };
 
