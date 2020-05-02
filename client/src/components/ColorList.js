@@ -29,10 +29,6 @@ const ColorList = ({ colors, updateColors }) => {
       .then(res =>{
         console.log(colorToEdit.id-1);
         updateColors(colors.splice(colorToEdit.id-1,1, ...colors, colorToEdit));
-
-
-
-
       })
   };
 
