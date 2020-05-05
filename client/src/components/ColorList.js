@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import axiosWithAuth from '../utils/axiosWithAuth';
-
+//setting initail color for state of colorToEdit
 const initialColor = {
   color: "",
   code: { hex: "" }
@@ -9,26 +9,52 @@ const initialColor = {
 
 const ColorList = ({ colors, updateColors }) => {
   console.log(colors);
+  //setting hook statement to swithc between true and false and update the form to either be shown or not.
   const [editing, setEditing] = useState(false);
+  //setting hook statement to change the initial color state
   const [colorToEdit, setColorToEdit] = useState(initialColor);
 
-
+  //setting function to be called on button click.
   const editColor = color => {
+    //changing boolion to true
     setEditing(true);
+    //selecting which color to pull up information on in the box
     setColorToEdit(color);
   };
-
+//declaring function to be evaluatedon the event of form submission
   const saveEdit = e => {
+    //preventing default behavior from the broweser
     e.preventDefault();
-    // Make a put request to save your updated color
-    // think about where will you get the id from...
-    // where is is saved right now?
+
     console.log(colorToEdit);
+    //accesssing API with autherization token being passed.
     axiosWithAuth()
+    //updating the information located in colors/:id with the colorToEdit variable ie. the state of the editing box upon submission
       .put(`colors/${colorToEdit.id}`, colorToEdit)
+      //after replacing that information then evaluate whats below
       .then(res =>{
-        console.log(colorToEdit.id-1);
-        updateColors(colors.splice(colorToEdit.id-1,1, ...colors, colorToEdit));
+        console.log(colorToEdit);
+        //updates the array of colors in state
+        updateColors(colors
+          //returns new array containing all colors that pass the test evaluated on them
+          .map(
+            //evaluating on current element in the array
+            color =>{
+              console.log(colorToEdit.id);
+              console.log(color.id);
+              //if the color ID does not equal the ID of the current color being edited, return the color unedited
+              if(color.id != colorToEdit.id){
+
+                  console.log(color);
+                  return color;
+            }
+            //if thats not the case ie. the ID does match the one being edited, return the contents of the submission in place of its origional value
+            else{
+              return colorToEdit;
+            }
+
+          }
+        ));
       })
   };
 
@@ -38,7 +64,7 @@ const ColorList = ({ colors, updateColors }) => {
       .delete(`colors/${color.id}`)
       .then(res => {
         console.log(res);
-        updateColors(colors.filter((color)=> color.id != res.data));
+        updateColors(colors.filter( color => color.id != res.data));
       })
       .catch(err => {
         console.log(err);
